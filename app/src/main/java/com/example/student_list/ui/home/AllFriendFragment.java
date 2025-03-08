@@ -16,6 +16,7 @@ import com.example.student_list.models.Student;
 import com.example.student_list.room.AppDatabase;
 import com.example.student_list.room.StudentDao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AllFriendFragment extends Fragment {
@@ -25,6 +26,7 @@ public class AllFriendFragment extends Fragment {
     private AppDatabase appDatabase;
     private StudentDao studentDao;
     private StudentAdapter studentAdapter;
+    private List<Student> originalList = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -44,7 +46,35 @@ public class AllFriendFragment extends Fragment {
 
         updateUI(students);
 
+        originalList = new ArrayList<>(studentDao.getAll());
+
+        binding.searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false; // Не нужно обрабатывать отправку текста
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterContacts(newText); // Вызываем метод фильтрации
+                return true;
+            }
+        });
+
         return root;
+    }
+
+    private void filterContacts(String query) {
+        List<Student> filteredList = new ArrayList<>();
+
+        for (Student student : originalList) {
+            if (student.getName_surname().toLowerCase().contains(query.toLowerCase()) ||
+                    student.getTel_number().contains(query)) {
+                filteredList.add(student);
+            }
+        }
+
+        updateUI(filteredList); // Обновляем список
     }
 
     private void updateUI(List<Student> students) {
