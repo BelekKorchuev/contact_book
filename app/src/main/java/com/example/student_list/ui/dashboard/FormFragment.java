@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 import android.Manifest;
 
@@ -39,17 +40,10 @@ public class FormFragment extends Fragment {
     private StudentDao studentDao;
     private ActivityResultLauncher<String> content_l;
     private ActivityResultLauncher<Intent> cameraLauncher;
-    private Bitmap bitmap_imageStudent;
-    private boolean isImgSelected = false;
+    private ActivityResultLauncher<String> requestPermissionLauncher;
 
-    private final ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    openCamera();
-                } else {
-                    Toast.makeText(requireContext(), "Доступ к камере запрещен", Toast.LENGTH_SHORT).show();
-                }
-            });
+    private Bitmap bitmapImageStudent;
+    private boolean isImgSelected = false;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -64,6 +58,11 @@ public class FormFragment extends Fragment {
                 .build();
         studentDao = appDatabase.studentDao();
 
+        // Заполняем Spinner (категории)
+        String[] categories = {"Семья", "Работа", "Друзья"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, categories);
+        binding.spinnerCategory.setAdapter(adapter);
+
         binding.btnLoadPhoto.setOnClickListener(v -> content_l.launch("image/*"));
 
         content_l = registerForActivityResult(new ActivityResultContracts.GetContent(),
@@ -74,9 +73,9 @@ public class FormFragment extends Fragment {
                     return;
                 }
                 try {
-                    bitmap_imageStudent = MediaStore.Images.Media.getBitmap(
+                    bitmapImageStudent = MediaStore.Images.Media.getBitmap(
                             requireContext().getContentResolver(), uri);
-                    binding.imagePlace.setImageBitmap(bitmap_imageStudent);
+                    binding.imagePlace.setImageBitmap(bitmapImageStudent);
                     isImgSelected = true;
                 } catch (IOException error) {
                     error.printStackTrace();
@@ -92,8 +91,8 @@ public class FormFragment extends Fragment {
             if (result.getResultCode() == getActivity().RESULT_OK && result.getData() != null) {
                 Bundle extras = result.getData().getExtras();
                 if (extras != null && extras.get("data") != null) {
-                    bitmap_imageStudent = (Bitmap) extras.get("data");
-                    binding.imagePlace.setImageBitmap(bitmap_imageStudent);
+                    bitmapImageStudent = (Bitmap) extras.get("data");
+                    binding.imagePlace.setImageBitmap(bitmapImageStudent);
                     isImgSelected = true;
                 } else {
                     Toast.makeText(requireContext(), "Ошибка получения фото", Toast.LENGTH_SHORT).show();
@@ -103,8 +102,17 @@ public class FormFragment extends Fragment {
                 isImgSelected = false;
             }
         });
-        return root;
 
+        // Запрашиваем разрешение на камеру
+        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+            if (isGranted) {
+                openCamera();
+            } else {
+                Toast.makeText(requireContext(), "Доступ к камере запрещен", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        return root;
     }
 
     private void checkCameraPermissionAndOpenCamera() {
@@ -133,44 +141,42 @@ public class FormFragment extends Fragment {
             String nameSurnameStudent = binding.editName.getText().toString();
             String telNumber = binding.editTelNumber.getText().toString();
             String desc = binding.editDesc.getText().toString();
+            String category = binding.spinnerCategory.getSelectedItem().toString();
+
+            if (desc.isEmpty()) {
+                desc = "Нет описания";
+            }
+
+            // Делаем фото не обязательным, если не выбрано — используем стандартную иконку
+            byte[] imageStudent = null;
+            if (isImgSelected && bitmapImageStudent != null) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                boolean success = bitmapImageStudent.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                if (success) {
+                    imageStudent = baos.toByteArray();
+                }
+            } else {
+                // Загружаем стандартную иконку
+                Bitmap defaultImage = BitmapFactory.decodeResource(getResources(), R.drawable.profile_icon);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                defaultImage.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                imageStudent = baos.toByteArray();
+            }
 
             if (nameSurnameStudent.isEmpty() || telNumber.isEmpty()) {
                 Toast.makeText(requireActivity(), "Имя и телефон обязательны!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if (desc.isEmpty()) {
-                desc = "-";
-            }
+            // Создаем объект студента и сохраняем в базу данных
+            Student student = new Student(nameSurnameStudent, telNumber, desc, category, imageStudent);
+            studentDao.insert(student);
 
-            if (!isImgSelected) {
-                // Если фото не выбрано, используем стандартную картинку
-                bitmap_imageStudent = BitmapFactory.decodeResource(getResources(), R.drawable.profile_icon);
-            }
+            Toast.makeText(requireActivity(), "Контакт добавлен!", Toast.LENGTH_SHORT).show();
 
-            // Сохранение фото
-            if (bitmap_imageStudent != null) {
-                ByteArrayOutputStream baos_imageStudent = new ByteArrayOutputStream();
-                boolean success = bitmap_imageStudent.compress(Bitmap.CompressFormat.PNG, 100, baos_imageStudent);
-
-                if (success) {
-                    byte[] imageStudent = baos_imageStudent.toByteArray();
-                    Student student = new Student(nameSurnameStudent, telNumber, desc, imageStudent);
-
-                    studentDao.insert(student);
-
-                    Toast.makeText(requireActivity(), "Контакт добавлен!", Toast.LENGTH_SHORT).show();
-
-                    // Переход обратно в список контактов (AllFriendFragment)
-                    NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-                    navController.navigate(R.id.navigation_all_friends);
-                } else {
-                    Toast.makeText(requireActivity(), "Ошибка при обработке изображения!", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(requireActivity(), "Изображение не выбрано!", Toast.LENGTH_SHORT).show();
-            }
-
+            // Переход обратно в список контактов (AllFriendFragment)
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            navController.navigate(R.id.navigation_all_friends);
         });
 
     }

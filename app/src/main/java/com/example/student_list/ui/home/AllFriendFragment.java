@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,6 +29,7 @@ public class AllFriendFragment extends Fragment {
     private StudentDao studentDao;
     private StudentAdapter studentAdapter;
     private List<Student> originalList = new ArrayList<>();
+    private String selectedCategory = "Все"; // По умолчанию - все категории
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -40,13 +43,10 @@ public class AllFriendFragment extends Fragment {
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build();
-
         studentDao = appDatabase.studentDao();
-        List<Student> students = studentDao.getAll();
-
-        updateUI(students);
 
         originalList = new ArrayList<>(studentDao.getAll());
+        updateUI(originalList);
 
         binding.searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
             @Override
@@ -56,25 +56,44 @@ public class AllFriendFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                filterContacts(newText); // Вызываем метод фильтрации
+                filterContacts(newText, selectedCategory); // Вызываем метод фильтрации
                 return true;
             }
+        });
+
+        // Настройка Spinner (категории)
+        String[] categories = {"Все", "Семья", "Работа", "Друзья"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, categories);
+        binding.spinnerFilter.setAdapter(adapter);
+
+        // Обработка выбора категории
+        binding.spinnerFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedCategory = categories[position];
+                filterContacts(binding.searchView.getQuery().toString(), selectedCategory);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
         return root;
     }
 
-    private void filterContacts(String query) {
+    // Фильтрация списка по имени, номеру и категории
+    private void filterContacts(String query, String category) {
         List<Student> filteredList = new ArrayList<>();
 
         for (Student student : originalList) {
-            if (student.getName_surname().toLowerCase().contains(query.toLowerCase()) ||
-                    student.getTel_number().contains(query)) {
+            boolean matchesQuery = student.getName_surname().toLowerCase().contains(query.toLowerCase()) ||
+                    student.getTel_number().contains(query);
+            boolean matchesCategory = category.equals("Все") || student.getCategory().equals(category);
+
+            if (matchesQuery && matchesCategory) {
                 filteredList.add(student);
             }
         }
-
-        updateUI(filteredList); // Обновляем список
+        updateUI(filteredList);
     }
 
     private void updateUI(List<Student> students) {

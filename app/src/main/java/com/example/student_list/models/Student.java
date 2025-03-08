@@ -19,18 +19,30 @@ public class Student {
     @ColumnInfo(name = "desc")
     private String desc;
 
+    @ColumnInfo(name = "category")
+    private String category;
+
     @ColumnInfo(name = "image", typeAffinity = ColumnInfo.BLOB )
     private byte[] image;
 
-    public Student(String name_surname, String tel_number,String desc, byte[] image) {
+    public Student(String name_surname, String tel_number, String desc, String category, byte[] image) {
         this.name_surname = name_surname;
         this.tel_number = tel_number;
         this.desc = desc;
+        this.category = category;
         this.image = image;
     }
 
     public String getDesc() {
         return desc;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public void setDesc(String desc) {
