@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#F4EABC"
+    android:padding="12dp"
+    android:layout_margin="10dp">
+
+
+     <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_card"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+         android:src="@drawable/ic_launcher_background"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFE64D"
+        android:orientation="vertical"
+        android:layout_weight="2"
+        android:layout_marginStart="6dp"
+        android:padding="5dp"
+        >
+
+        <TextView
+            android:id="@+id/name_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Peter Parcker"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:id="@+id/number_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="0(393)989455"
+            android:textSize="15sp"/>
+
+
+        <TextView
+            android:id="@+id/card_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_marginTop="11dp"
+            android:text="ЧТОТОТОТОТОТТ"
+            android:textSize="15sp"
+            />
+
+        <EditText
+            android:id="@+id/message_card"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:background="#B45555"
+            android:hint="wrire here massege"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/dropdown_menu"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_gravity="end"
+        android:layout_marginStart="6dp"
+        android:background="@drawable/baseline_storage_24"
+        android:contentDescription="dropdown menu"
+        tools:ignore="TouchTargetSizeCheck"
+        />
+
+
+
+</LinearLayout>
+
