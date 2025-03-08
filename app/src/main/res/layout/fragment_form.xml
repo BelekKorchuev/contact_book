@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.dashboard.FormFragment"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#F4EABC"
+    android:id="@+id/form_container">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_place"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/profile_icon"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_load_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:text="Загрузить фото"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#FFEB3B"
+        android:layout_gravity="center_horizontal"
+        app:cornerRadius="8dp"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_take_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:text="Сделать фото"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center_horizontal"
+        app:cornerRadius="8dp"/>
+
+    <EditText
+        android:id="@+id/edit_name"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="8dp"
+        android:background="#FFE64D"
+        android:hint="Имя и фамилия:"
+        android:textColor="@color/black"
+        android:padding="10dp"
+        />
+
+    <EditText
+        android:id="@+id/edit_telNumber"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="8dp"
+        android:background="#FFE64D"
+        android:hint="Номер телефона:"
+        android:inputType="phone"
+        android:textColor="@color/black"
+        android:padding="10dp"
+        />
+
+    <EditText
+        android:id="@+id/edit_desc"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="8dp"
+        android:background="#FFE64D"
+        android:hint="Описание:"
+        android:textColor="@color/black"
+        android:padding="10dp"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_save"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:text="Сохранить"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#FFEB3B"
+        android:layout_gravity="center_horizontal"
+        app:cornerRadius="8dp"
+        />
+
+</LinearLayout>

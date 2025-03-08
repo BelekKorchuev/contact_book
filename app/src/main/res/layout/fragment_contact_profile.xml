@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#F4EABC"
+    tools:context=".ui.dashboard.ContactProfileFragment">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_profile"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/profile_icon"
+        android:contentDescription="Фото контакта"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_change_photo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Изменить фото"
+        android:backgroundTint="#FFEB3B"
+        app:cornerRadius="8dp"
+        android:layout_marginTop="8dp"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_take_photo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Сделать фото"
+        app:cornerRadius="8dp"
+        />
+
+    <EditText
+        android:id="@+id/edit_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Имя и фамилия"/>
+
+    <EditText
+        android:id="@+id/edit_telNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Номер телефона"
+        android:inputType="phone"/>
+
+    <EditText
+        android:id="@+id/edit_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Описание"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_save_changes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Сохранить изменения"
+        android:backgroundTint="#FFEB3B"
+        app:cornerRadius="8dp"
+        android:layout_marginTop="8dp"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_delete_contact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Удалить контакт"
+        android:backgroundTint="@android:color/holo_red_light"
+        app:cornerRadius="8dp"/>
+
+</LinearLayout>
